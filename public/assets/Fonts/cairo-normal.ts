@@ -1,0 +1,1 @@
+export const CairoBase64 = `AAEAAA....`;

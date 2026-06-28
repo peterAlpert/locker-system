@@ -1,0 +1,14 @@
+logoutBtn {
+    display: inline;
+
+}
+
+.logOut {
+    font-size: 15px;
+    transition: .3s;
+    padding-left: 5px;
+}
+
+.logOut:hover {
+    transform: scale(1.1);
+}

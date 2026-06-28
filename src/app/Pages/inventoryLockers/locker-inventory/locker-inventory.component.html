@@ -1,0 +1,151 @@
+<div class="inventory-page" dir="rtl">
+
+    <div class="inventory-card">
+
+        <!-- Header -->
+        <div class="inventory-header">
+            <div class="title-box">
+                <span class="locker-icon">🔐</span>
+                <div>
+                    <h2>جرد لوكر الأمانات</h2>
+                    <p>تسجيل محتويات اللوكر بشكل منظم</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <div class="inventory-body">
+
+            <div class="row g-4">
+
+                <div class="col-md-4">
+                    <div class="input-group-custom">
+                        <label>رقم اللوكر</label>
+                        <input type="number" class="form-control custom-input" [(ngModel)]="inventory.number"
+                            placeholder="مثال: 12">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="input-group-custom"> <label>المبنى</label> <select class="form-select custom-input"
+                            [(ngModel)]="inventory.building">
+                            <option value="">اختر المبنى</option>
+                            <option value="مجمع السباحه">مجمع السباحه</option>
+                            <option value="المبني الاجتماعي"> المبني الاجتماعي </option>
+                            <option value="المبني الرياضي"> المبني الرياضي </option>
+                            <option value="مبني الخدمات"> مبني الخدمات </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="input-group-custom">
+                        <label>المكان</label>
+
+                        <select class="form-select custom-input" [(ngModel)]="inventory.place">
+
+                            <option value="">اختر المكان</option>
+
+                            <option value="الجيم">الجيم</option>
+
+                            <option value="الصحي">الصحي</option>
+
+                            <option value="الاولمبي">الاولمبي</option>
+
+                            <option value="القتاليه">القتاليه</option>
+
+                            <option value="الخدمات">الخدمات</option>
+
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="input-group-custom">
+                        <label>اسم العضو</label>
+                        <input type="text" class="form-control custom-input" [(ngModel)]="inventory.memberName"
+                            placeholder="اسم العضو بالكامل">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="input-group-custom">
+
+                        <label>رقم العضوية</label>
+
+                        <div class="input-group membership-group">
+
+                            <span class="input-group-text fixed-code">
+                                00400
+                            </span>
+
+                            <input type="text" class="form-control custom-input"
+                                [(ngModel)]="inventory.membershipNumber" placeholder="أدخل الرقم" dir="rtl">
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Divider -->
+            <div class="section-divider"></div>
+
+            <!-- Items Header -->
+            <div class="items-header">
+
+                <div>
+                    <h4>📦 محتويات اللوكر</h4>
+                    <span>أضف العناصر الموجودة داخل اللوكر</span>
+                </div>
+
+                <button class="btn add-btn" (click)="addItem()">
+                    <i class="fa-solid fa-plus"></i>
+                    إضافة عنصر
+                </button>
+
+            </div>
+
+            <!-- Items -->
+            <div class="items-container">
+
+                <div *ngFor="let item of inventory.items; let i = index" class="item-card">
+
+                    <div class="item-number">
+                        {{ i + 1 }}
+                    </div>
+
+                    <input type="text" class="form-control item-input" placeholder="اكتب اسم العنصر..."
+                        [(ngModel)]="item.name">
+
+                    <button class="btn delete-btn" (click)="removeItem(i)">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-box" *ngIf="inventory.items.length === 0">
+                <span>📭 لا توجد عناصر مضافة</span>
+            </div>
+
+            <!-- Save -->
+            <div class="save-section">
+
+                <button class="btn save-btn" (click)="saveInventory()">
+
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    حفظ الجرد
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

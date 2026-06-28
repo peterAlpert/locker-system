@@ -1,0 +1,493 @@
+<!-- 1️⃣ Controls -->
+<div class="areas-page" [class.compact]="selectedArea !== 0" dir="rtl">
+    <div class="areas-grid">
+
+        <div class="area-card" (click)="chooseArea(1)">
+            <i class="fa-solid fa-dumbbell icon gym"></i>
+            <h3>الجيم</h3>
+            <p>Gym Lockers</p>
+        </div>
+
+        <div class="area-card" (click)="chooseArea(2)">
+            <i class="fa-solid fa-spa icon spa"></i>
+            <h3>الصحي</h3>
+            <p>Spa Lockers</p>
+        </div>
+
+        <div class="area-card" (click)="chooseArea(3)">
+            <i class="fa-solid fa-hand-fist icon combat"></i>
+            <h3>القتالية</h3>
+            <p>Combat Lockers</p>
+        </div>
+
+        <div class="area-card" (click)="chooseArea(4)">
+            <i class="fa-solid fa-person-swimming icon olympic"></i>
+            <h3> الأولمبي</h3>
+            <p>Olympic Lockers</p>
+        </div>
+
+        <div class="area-card" (click)="chooseArea(5)">
+            <i class="fa-solid fa-screwdriver-wrench icon services"></i>
+            <h3> الخدمات</h3>
+            <p>Service Lockers</p>
+        </div>
+        <div class="area-card" (click)="openInventoryPage()">
+            <i class="fa-solid fa-box-open icon"></i>
+            <h3>الأمانات</h3>
+            <p>Clearance</p>
+        </div>
+
+    </div>
+
+</div>
+
+
+<button class="back-btn" *ngIf="selectedArea !== 0" (click)="selectedArea = 0">
+
+    ⬅ رجوع
+
+</button>
+
+<button class="report-btn" (click)="printReport()">
+    📊 تقرير اللواكر
+</button>
+
+<button class="fullscreen-btn" (click)="toggleFullscreen()">
+
+    ⛶
+</button>
+<div class="search-box w-25 text-center mx-auto my-2" *ngIf="selectedArea !== 0" dir="rtl">
+    <!-- <button class="voice-btn" (click)="startVoiceSearch()">
+        🎤
+    </button> -->
+    <i class="fa fa-search"></i>
+    <input [(ngModel)]="searchText" name="searchIn" (input)="filterLockers()"
+        placeholder="ابحث باسم العضو أو رقم العضوية">
+</div>
+
+
+<h2 class="area-title" *ngIf="selectedArea !== -1">
+    {{ getAreaTitle() }}
+</h2>
+
+<div class="gender-switch text-center mx-auto my-4" *ngIf="selectedArea !== 0" dir="rtl">
+
+    <button class="btn btn-male btn-lg mx-2" [class.active]="selectedGender === 1" (click)="changeGender(1)">
+
+        👨 رجال
+    </button>
+
+    <button *ngIf="hasFemaleLockers" class="btn btn-bink btn-lg mx-2" [class.active]="selectedGender === 2"
+        (click)="changeGender(2)">
+
+        👩 سيدات
+    </button>
+
+</div>
+
+<div class="stats-bar" *ngIf="selectedArea !== 0" dir="rtl">
+
+    <div class="stat-card">
+        🔓 المتاح {{ availableCount }}
+    </div>
+
+    <div class="stat-card">
+        🔒 المحجوز {{ bookedCount }}
+    </div>
+
+</div>
+
+
+<!-- Layout جديد بسيط -->
+<div class="layout" *ngIf="selectedArea !== 0" [style.marginTop.px]="selectedArea !== 0 ? headerHeight : 0" dir="rtl">
+
+    <div class="locker-container">
+
+        <div class="loading-lockers" *ngIf="isLoading">
+
+            <div class="fake-locker" *ngFor="let x of [].constructor(15)">
+            </div>
+
+        </div>
+
+        <div class="locker-column" *ngFor="let column of allColumns">
+
+            <div class="locker" [attr.data-number]="locker?.number" [class.open]="locker.isOpen"
+                [class.booked]="isBooked(locker)" *ngFor="let locker of column" [ngClass]="{
+                   'booked': isBooked(locker),
+                   'available': !isBooked(locker),
+                   'highlight': isHighlighted(locker),
+                   'jump': isHighlighted(locker),
+                   'blink': isHighlighted(locker),
+                 }" (click)="selectLocker(locker)">
+
+                <div class="lock-icon" *ngIf="isBooked(locker)">
+                    🔒
+                </div>
+
+                <!-- <div class="locker-inside" *ngIf="locker.isOpen"></div> -->
+                <div class="handle" (click)="toggleLocker(locker, $event)">
+                </div>
+
+                <span class="number">{{ locker?.number }}</span>
+
+                <div class="tooltip" *ngIf="isBooked(locker)">
+                    <b>{{ locker.memberName }}</b><br>
+                    📱 {{ locker.membershipNumber }}<br>
+                    {{ locker.phone }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- 4️⃣ Popup التفاصيل -->
+<div class="overlay" *ngIf="showDetails" dir="rtl">
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <h3>📦 تفاصيل اللوكر</h3>
+            <span class="close" (click)="showDetails = false">✖</span>
+        </div>
+
+        <div class="modal-body">
+
+            <div class="info">
+                <span>رقم اللوكر</span>
+                <b>{{ selectedLocker?.number }}</b>
+            </div>
+            <hr>
+
+            <div class="info">
+                <span>الاسم</span>
+                <b>{{ lockerDetails?.memberName }}</b>
+            </div>
+            <hr>
+
+            <div class="info">
+                <span>رقم العضوية</span>
+                <b>{{ lockerDetails?.membershipNumber }}</b>
+            </div>
+            <hr>
+
+            <div class="row">
+                <div>
+                    <span class="mx-2">من</span>
+                    <b class="fs-6 mx-2">{{ formatDate(lockerDetails?.startDate) }}</b>
+
+                    <span class="mx-2">إلى</span>
+                    <b class="fs-6 mx-2">{{ formatDate(lockerDetails?.endDate) }}</b>
+                </div>
+            </div>
+            <hr>
+
+            <div class="info">
+                <span>نوع الحجز</span>
+                <b class="type-badge">
+                    {{ getTypeName(lockerDetails?.type) }}
+                </b>
+            </div>
+
+            <div class="actions mt-4">
+                <button class="btn btn-sm btn-primary w-100 my-1" (click)="renew()">
+                    تجديد الاشتراك 🔄
+                </button>
+                <button class="btn btn-sm btn-danger w-100 my-1" (click)="cancelBooking()">
+                    إلغاء الحجز ❌
+                </button>
+                <button class="btn btn-sm btn-warning w-100 my-1" (click)="moveToInventory(selectedLocker)">
+                    إضافة للأمانات ( فض لوكر ) 📦
+                </button>
+                <button class="btn btn-dark w-100 my-1" (click)="printReceipt()">
+                    طباعة إيصال 🧾
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- 5️⃣ Popup الحجز -->
+<div class="overlay" *ngIf="showBooking" dir="rtl">
+    <div class="modal-box modern">
+
+        <div class="modal-header">
+            <h3>📦 حجز لوكر رقم {{ selectedLocker?.number }}</h3>
+            <span class="close" (click)="showBooking = false">✖</span>
+        </div>
+
+        <div class="modal-body">
+
+            <div class="form-group">
+                <label>اسم العضو</label>
+                <input [(ngModel)]="bookingData.name" placeholder="اكتب الاسم">
+            </div>
+
+            <div class="form-group">
+                <label>رقم العضوية</label>
+                <input [(ngModel)]="bookingData.membershipNumber" placeholder="رقم العضوية">
+            </div>
+
+            <div class="form-group">
+                <label>رقم الموبايل</label>
+                <input [(ngModel)]="bookingData.phone" placeholder="رقم الموبايل">
+            </div>
+
+            <div class="form-group">
+                <label>نوع الاشتراك</label>
+                <select [(ngModel)]="bookingData.type" (change)="calculatePrice()">
+
+                    <option [ngValue]="0">سنوي</option>
+                    <option [ngValue]="1">نصف سنوي</option>
+
+                </select>
+            </div>
+
+            <div class="price-box">
+                💰 السعر: <b>{{ bookingData.price }} جنيه</b>
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+
+            <button class="save-btn"
+                [disabled]="!bookingData.name || !bookingData.membershipNumber || !bookingData.phone"
+                (click)="saveBooking()">
+                💾 حفظ
+            </button>
+
+            <button class="cancel-btn" (click)="showBooking = false">
+                إلغاء
+            </button>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- 5️⃣ Popup التجديد -->
+<div class="overlay" *ngIf="showRenew">
+
+    <div class="modal-box modern">
+
+        <div class="modal-header">
+            <h3>🔄 تجديد اشتراك اللوكر</h3>
+            <span class="close" (click)="showRenew = false">✖</span>
+        </div>
+
+        <div class="modal-body">
+
+            <div class="form-group">
+                <label>نوع الاشتراك</label>
+
+                <select [(ngModel)]="renewData.type" (change)="calculateRenewPrice()">
+
+                    <option [value]="0">
+                        سنوي
+                    </option>
+
+                    <option [value]="1">
+                        نصف سنوي
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="price-box">
+
+                💰 السعر:
+                <b>{{ renewData.price }} جنيه</b>
+
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+
+            <button class="save-btn" (click)="confirmRenew()">
+
+                تأكيد التجديد
+            </button>
+
+            <button class="cancel-btn" (click)="showRenew = false">
+
+                إلغاء
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- 6️⃣ Inventory Page -->
+<div class="text-center mx-auto my-4" *ngIf="isInventoryMode">
+    <button class="btn btn-lg btn-info" (click)="addNewInventory()">اضافة جرد جديد</button>
+</div>
+<div class="layout" [class.zoom-mode]="focusedLocker" *ngIf="isInventoryMode" dir="rtl">
+
+    <div class="locker-container">
+
+        <div class="locker-column" *ngFor="let column of allColumns">
+
+            <div class="locker inventory-locker" *ngFor="let inv of column" [class.open]="inv.isOpen"
+                (click)="!inv.isOpen && openInventoryDetails(inv)" [class.delivered-locker]="inv.isDelivered">
+
+                <!-- <div class="focus-overlay" *ngIf="focusedLocker" (click)="closeFocus()"></div> -->
+                <!-- handle -->
+                <div class="handle" (click)="toggleInventoryLocker(inv, $event)">
+                </div>
+
+                <!-- number -->
+                <span class="number">{{ inv.number }}</span>
+
+                <!-- tooltip -->
+                <div class="tooltip">
+                    <b>{{ inv.memberName }}</b><br>
+                    📱 {{ inv.membershipNumber }}
+                </div>
+
+
+
+                <!-- inside content -->
+                <div class="inside" *ngIf="inv.isOpen && focusedLocker?.id === inv.id">
+                    <div *ngFor="let item of inv.items">
+                        📦 {{ item.name }}
+                    </div>
+
+                    <div *ngIf="!inv.items || inv.items.length === 0">
+                        فارغ
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- 7️⃣ Inventory Details Popup -->
+<div class="overlay" *ngIf="showInventoryDetails" dir="rtl">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <h3>📦 تفاصيل الأمانات</h3>
+            <span class="close" (click)="showInventoryDetails = false">✖</span>
+        </div>
+
+        <div class="modal-body">
+
+            <div class="info">
+                <span>رقم اللوكر</span>
+                <b>{{ selectedInventory?.number }}</b>
+            </div>
+
+            <div class="info">
+                <span>الاسم</span>
+                <b>{{ selectedInventory?.memberName }}</b>
+            </div>
+
+            <div class="info">
+                <span>رقم العضوية</span>
+                <b>{{ selectedInventory?.membershipNumber }}</b>
+            </div>
+
+            <hr>
+
+            <h5>📦 المحتويات</h5>
+
+            <div *ngFor="let item of selectedInventory?.items">
+                - {{ item.name }}
+            </div>
+
+            <div *ngIf="selectedInventory?.items && selectedInventory.items.length === 0">
+                فارغ
+            </div>
+
+        </div>
+
+        <hr>
+
+        <div *ngIf="selectedInventory?.isDelivered" class="delivered-status">
+
+            ✅ تم تسليم الأمانات
+
+            <div class="mt-2">
+                🕒 {{ formatDate(selectedInventory?.deliveredDate) }}
+            </div>
+
+        </div>
+
+        <button *ngIf="!selectedInventory?.isDelivered" class="btn btn-success w-100 mt-3" (click)="deliverInventory()">
+
+            📦 تسليم للعضو
+
+        </button>
+
+    </div>
+
+</div>
+
+<!-- PRINT RECEIPT -->
+
+<div id="print-section">
+
+    <div class="receipt-header">
+
+        <img src="assets/logo.png" class="receipt-logo">
+
+        <div class="receipt-title">
+            <h2>إيصال لوكر</h2>
+            <p>Locker Receipt</p>
+        </div>
+
+    </div>
+
+    <div class="receipt-row">
+        <span>رقم اللوكر</span>
+        <b>{{ selectedLocker?.number }}</b>
+    </div>
+
+    <div class="receipt-row">
+        <span>اسم العضو</span>
+        <b>{{ lockerDetails?.memberName }}</b>
+    </div>
+
+    <div class="receipt-row">
+        <span>رقم العضوية</span>
+        <b>{{ lockerDetails?.membershipNumber }}</b>
+    </div>
+
+    <div class="receipt-row">
+        <span>الموبايل</span>
+        <b>{{ lockerDetails?.phone }}</b>
+    </div>
+
+    <div class="receipt-row">
+        <span>بداية الاشتراك</span>
+        <b>{{ formatDate(lockerDetails?.startDate) }}</b>
+    </div>
+
+    <div class="receipt-row">
+        <span>نهاية الاشتراك</span>
+        <b>{{ formatDate(lockerDetails?.endDate) }}</b>
+    </div>
+
+    <div class="receipt-footer">
+
+        شكراً لاستخدامكم نظام اللوكرات ❤️
+
+    </div>
+
+</div>
