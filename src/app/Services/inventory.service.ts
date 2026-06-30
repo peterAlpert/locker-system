@@ -29,7 +29,7 @@ interface LockerInventory {
 })
 export class InventoryService {
 
-  baseUrl = 'https://localhost:7064/api/inventory';
+  baseUrl = 'http://wdlokerssystem.runasp.net/api/inventory';
 
   constructor(private http: HttpClient) { }
 

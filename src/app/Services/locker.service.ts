@@ -6,8 +6,8 @@ import { Injectable } from '@angular/core';
 })
 export class LockerService {
 
-  baseUrl = 'https://localhost:7064/api/Loker';
-  baseUrl2 = 'https://localhost:7064/api';
+  baseUrl = 'http://wdlokerssystem.runasp.net/api/Loker';
+  baseUrl2 = 'http://wdlokerssystem.runasp.net/api';
 
   constructor(private http: HttpClient) { }
 
