@@ -1159,6 +1159,49 @@ body:fullscreen .fullscreen-btn {
     margin-top: 15px;
 }
 
+.action-buttons {
+
+    position: fixed;
+
+    top: 75px;
+
+    left: 15px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+    z-index: 9999;
+}
+
+.action-buttons button {
+
+    width: 52px;
+
+    height: 52px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: #0d6efd;
+
+    color: #fff;
+
+    font-size: 22px;
+
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .3);
+
+    transition: .25s;
+}
+
+.action-buttons button:hover {
+
+    transform: scale(1.08);
+}
+
 /* ================= PRINT ================= */
 
 #print-section {
@@ -1282,6 +1325,25 @@ body:fullscreen .fullscreen-btn {
     }
 }
 
+.locker-column:has(.locker:only-child) .locker {
+
+    height: 70px;
+}
+
+@media(max-width:768px) {
+
+    .locker-column:has(.locker:only-child) {
+
+        height: 80px;
+    }
+
+    .locker-column:has(.locker:only-child) .locker {
+
+        height: 70px;
+    }
+
+}
+
 @media (max-width:768px) {
 
     .layout {
@@ -1298,28 +1360,33 @@ body:fullscreen .fullscreen-btn {
     }
 
     .locker-column {
-        width: 55px;
-        min-width: 55px;
-        height: 120px;
-        padding: 3px;
+
+        width: 70px;
+        min-width: 70px;
+        height: 145px;
     }
 
     .locker {
-        margin: 1px;
-        border-radius: 8px;
-        font-size: 12px;
+
+        margin: 2px;
+        font-size: 14px;
     }
 
     .handle {
-        width: 6px;
-        height: 15px;
-        right: 3px;
+
+        width: 7px;
+        height: 18px;
+        right: 4px;
     }
 
     .lock-icon {
-        right: 18px;
-        font-size: 10px;
+
+        top: 3px;
+        right: 22px;
+        font-size: 11px;
     }
+
+
 }
 
 @media(max-width:768px) {

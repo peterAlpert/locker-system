@@ -48,14 +48,21 @@
 
 </button>
 
-<button class="report-btn" (click)="printReport()">
-    📊 تقرير اللواكر
-</button>
+<div class="action-buttons">
 
-<button class="fullscreen-btn" (click)="toggleFullscreen()">
+    <button class="back-btn" *ngIf="selectedArea !== 0" (click)="selectedArea = 0">
+        <i class="fa fa-arrow-left"></i>
+    </button>
 
-    ⛶
-</button>
+    <button (click)="printReport()">
+        <i class="fa fa-file-lines"></i>
+    </button>
+
+    <button (click)="toggleFullscreen()">
+        <i class="fa fa-expand"></i>
+    </button>
+
+</div>
 <div class="search-box w-25 text-center mx-auto my-2" *ngIf="selectedArea !== 0" dir="rtl">
     <!-- <button class="voice-btn" (click)="startVoiceSearch()">
         🎤
