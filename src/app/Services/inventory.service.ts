@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment.prod';
 
 interface InventoryItem {
   name: string;
@@ -29,7 +30,8 @@ interface LockerInventory {
 })
 export class InventoryService {
 
-  baseUrl = 'https://wdlokerssystem.runasp.net/api/inventory';
+  // baseUrl = 'https://wdlokerssystem.runasp.net/api/inventory';
+  baseUrl = `${environment.apiUrl}/inventory`;
 
   constructor(private http: HttpClient) { }
 

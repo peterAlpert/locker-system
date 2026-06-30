@@ -1,13 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LockerService {
 
-  baseUrl = 'https://wdlokerssystem.runasp.net/api/Loker';
-  baseUrl2 = 'https://wdlokerssystem.runasp.net/api';
+  // baseUrl = 'https://wdlokerssystem.runasp.net/api/Loker';
+  // baseUrl2 = 'https://wdlokerssystem.runasp.net/api';
+
+  baseUrl = `${environment.apiUrl}/Loker`;
+  baseUrl2 = `${environment.apiUrl}`;
 
   constructor(private http: HttpClient) { }
 
